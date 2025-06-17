@@ -1,0 +1,28 @@
+{
+	"main": {
+		"flags": ["-Wall", "-Werror", "-std=c99"],
+		"defines": ["R3STD_BUILD_SOURCE"],
+
+		"includes": ["."],
+		"sources": ["src/r3std/*.c"],
+
+		"name": "r3std",
+		"type": "dll",
+		"dest": "bin"
+	},
+
+	"tests": {
+		"flags": ["-Wall", "-Werror", "-std=c99"],
+
+		"includes": ["."],
+		"sources": ["src/tests/*.c"],
+		"libraries": {
+			"r3std": "bin"
+		},
+
+		"name": null,
+		"type": "exe",
+		"dest": "bin"
+	}
+
+}
