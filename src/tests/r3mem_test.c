@@ -1,3 +1,4 @@
+#define R3_MODULES
 #include <include/r3std/r3mem.h>
 #include <stdio.h>
 

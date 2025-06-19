@@ -3,10 +3,10 @@
 
 #include <include/r3std/r3def.h>
 
-typedef struct Blob {
+typedef struct R3_Blob {
 	addr data;
 	u64 size;
 	u32 align;
-} Blob;
+} R3_Blob;
 
 #endif // __R3TYPE_H__
