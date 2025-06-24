@@ -1,8 +1,6 @@
-# ![r3-logo](link) **r3shape's standard library**
-| **A lightweight runtime library.**
+# ![r3kt-logo](link) **r3shape's kit of tools**
 
-
-**r3std** is designed to be minimal, extensible, and easy to integrate—ideal for custom runtimes, low-level tools, and other systems-level development.
+**r3kt** is designed to be minimal, and extensible, making writing complex programs simpler by reducing bugs and boilerplate, helping you ship faster.
 
 ---
 ## Features
@@ -16,14 +14,12 @@
 ## API Overview
 | API     | Description                           |
 |---------|---------------------------------------|
-| `r3mem`    | Memory management (handles alignment + ptr diffs)  |
-| `r3arr`    | Array data structures (static, dynamic, linked...) |
-| `r3str`    | String handling/manipulation                    |
-| `r3log`    | Logging utilities                               |
-| `r3math`   | Math utilities (scalars, vectors, matrices)     |
-| `r3file`   | File I/O and stream management                  |
-
-| <b>NOTE:</b> Each module is independently initialized and tracked via runtime metadata.
+| `r3ktmem`    | Memory management |
+| `r3ktarr`    | Array data structures |
+| `r3ktstr`    | String handling/manipulation |
+| `r3ktlog`    | Logging utilities |
+| `r3ktmath`   | Math utilities (GL friendly) |
+| `r3ktfile`   | File handling/manipulation |
 
 ---
 
@@ -33,8 +29,9 @@
 
 | Release       | Contents                                                                 |
 |---------------|--------------------------------------------------------------------------|
-| `r3std-dev`   | Full development version: headers, and prebuilt `.dll`    |
-| `r3std`       | Standard release: prebuilt `.dll`                         |
+| `r3kt-dev`    | Full development version: headers, and prebuilt `.dll` |
+| `r3kt-rt`     | Standard featureset + r3kt runtime: prebuilt `.dll` |
+| `r3kt`        | Standard release: prebuilt `.dll` |
 
 | <b>NOTE:</b> Both versions are available as `.zip` and `.tar` archives.
 
@@ -42,18 +39,17 @@
 
 ### 2. Development Integration
 
-Use the `r3std-dev` release if you want access to all headers, and prebuilt binaries:
+Use the `r3kt-dev` release if you want access to all headers, and prebuilt binaries:
 
-- Add r3std's `include` directory to your compiler's header search path
+- Add r3kt's `include` directory to your compiler's header search path
 - Link against the provided `.dll` build artifact.
-- Use `r3std.h` to bootstrap the library and access the full API
+- Use `r3kt.h` to bootstrap the library and access the full API
 
 ---
 
 ### 3. Write Some Code
 ```c
-// #include <include/r3std/r3std.h> // include the enire standard or
-#include <include/r3std/r3mem.h>    // include the standard API's you need
+#include <include/r3kt/r3ktmem.h>    // include the API's you need
 
 int main() {
     void* some_memory;
@@ -75,30 +71,35 @@ int main() {
 ### Option 1: Use your preferred build system or a minimal setup:
 
 ```bash
-gcc -shared -o r3std.dll src/r3std/*.c
+gcc -shared -o r3kt.dll src/r3kt/*.c
 ```
 
 ### Option 2: The build process can be automated using [`r3make`](https://github.com/r3shape/r3make).
 
 ```bash
-r3make
+r3make -nf
 ```
-| <b>NOTE:</b> This command builds the SSDK library
+| <b>NOTE:</b> This command builds the r3kt library
 
 ```bash
-r3make -be -r -t tests
+r3make -nf -t r3ktrt
 ```
-| <b>NOTE:</b> This command builds, and runs the SSDK library tests
+| <b>NOTE:</b> This command builds, and runs the r3kt library with runtime features
+
+```bash
+r3make -nf -be -r -t tests
+```
+| <b>NOTE:</b> This command builds, and runs the r3kt library tests
 
 ---
 
-## r3std Contributors
+## r3kt Contributors
 
-<a href="https://github.com/r3shape/r3std/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=r3shape/r3std" />
+<a href="https://github.com/r3shape/r3kt/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=r3shape/r3kt" />
 </a>
 
 ## License
 
-r3std is released under the MIT License.
+r3kt is released under the MIT License.
 

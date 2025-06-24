@@ -1,5 +1,5 @@
-#ifndef __R3DEF_H__
-#define __R3DEF_H__
+#ifndef __R3KTDEF_H__
+#define __R3KTDEF_H__
 
 typedef char* 			str;
 typedef const char* 		cstr;
@@ -28,22 +28,33 @@ typedef unsigned long long 	u64, u8b, uptr;
 #define mib kib * 1024
 #define gib mib * 1024
 
-#ifdef R3STD_BUILD_SOURCE
+#define I8_MAX  ((1 << 8) - 1)
+#define I16_MAX ((1 << 16) - 1)
+#define I32_MAX ((1 << 32) - 1)
+#define I64_MAX ((1 << 64) - 1)
+
+#define r3_for_i(start, stop, count) for (u32 i = start; i < stop; i += count)
+
+#define r3_for_j(start, stop, count) for (u32 j = start; j < stop; j += count)
+
+#define r3_for_k(start, stop, count) for (u32 k = start; k < stop; k += count)
+
+#ifdef R3KT_BUILD_SOURCE
     #ifdef _MSC_VER
-        #define R3STD_API __declspec(dllexport)
+        #define R3KT_API __declspec(dllexport)
     #elif #defined (__GNUC__) || defined (__clang__)
-        #define R3STD_API __attribute__((visibility("default")))
+        #define R3KT_API __attribute__((visibility("default")))
     #else
-        #define R3STD_API
+        #define R3KT_API
     #endif
 #else
     #ifdef _MSC_VER
-        #define R3STD_API __declspec(dllimport)
+        #define R3KT_API __declspec(dllimport)
     #elif defined(__GNUC__) || defined(__clang__)
-        #define R3STD_API __attribute__((visibility("default")))
+        #define R3KT_API __attribute__((visibility("default")))
     #else
-        #define R3STD_API
+        #define R3KT_API
     #endif
 #endif
 
-#endif // __R3DEF_H__
+#endif // __R3KTDEF_H__

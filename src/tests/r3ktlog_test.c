@@ -1,5 +1,4 @@
-#define R3_MODULES
-#include <include/r3std/r3log.h>
+#include <include/r3kt/r3ktlog.h>
 #include <stdio.h>
 
 int main() {
@@ -15,7 +14,7 @@ int main() {
 	r3_log_fmt(ERROR_LOG, "Error Message: d%dd%ds\n", 34, 0);
 	r3_log_fmt(SUCCESS_LOG, "Success Message: d%dd%ds\n", 34, 0);
 
-	printf("r3log test passed!\n");
+	printf("r3ktlog test passed!\n");
 	return 0;
 }
 

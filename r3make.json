@@ -1,12 +1,24 @@
 {
 	"main": {
 		"flags": ["-Wall", "-Werror", "-std=c99"],
-		"defines": ["R3STD_BUILD_SOURCE"],
+		"defines": ["R3KT_BUILD_SOURCE"],
 
 		"includes": ["."],
-		"sources": ["src/r3std/*.c"],
+		"sources": ["src/r3kt/*.c"],
 
-		"name": "r3std",
+		"name": "r3kt",
+		"type": "dll",
+		"dest": "bin"
+	},
+	
+	"r3ktrt": {
+		"flags": ["-Wall", "-Werror", "-std=c99"],
+		"defines": ["R3KT_BUILD_SOURCE", "R3KT_BUILD_RUNTIME_SOURCE"],
+
+		"includes": ["."],
+		"sources": ["src/r3kt/*.c"],
+
+		"name": "r3kt",
 		"type": "dll",
 		"dest": "bin"
 	},
@@ -17,7 +29,7 @@
 		"includes": ["."],
 		"sources": ["src/tests/*.c"],
 		"libraries": {
-			"r3std": "bin"
+			"r3kt": "bin"
 		},
 
 		"name": null,

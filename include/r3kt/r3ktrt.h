@@ -1,11 +1,11 @@
-#ifndef __R3RT_H__
-#define __R3RT_H__
+#ifndef __R3KTRT_H__
+#define __R3KTRT_H__
 
-#include <include/r3std/r3def.h>
+#include <include/r3kt/r3ktdef.h>
 
-typedef struct R3_Runtime_Data {
+typedef struct R3kt_Runtime {
 	struct log {
-		u64 errors:
+		u64 errors;
 		u64 warns;
 		u8 active;
 	} log;
@@ -40,13 +40,13 @@ typedef struct R3_Runtime_Data {
 		u64 read;
 	} file;
 
+	str version;
 	u64 size;
 	u8 state;
-	u8 version;
-} R3_Runtime_Data;
+} R3kt_Runtime;
 
-R3STD_API u8 r3_runtime_get(addr out);
-R3STD_API u8 r3_runtime_reset(none);
-R3STD_API u8 r3_runtime_dump(none);
+R3KT_API u8 r3_runtime_dump(none);
+R3KT_API u8 r3_runtime_reset(none);
+R3KT_API u8 r3_runtime_pointer(addr* out);
 
-#endif	// __R3RT_H__
+#endif	// __R3KTRT_H__
