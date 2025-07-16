@@ -1,4 +1,4 @@
-# ![r3kt-logo](link) **r3shape's kit of tools**
+# ![r3shape-labs](https://github.com/user-attachments/assets/ac634f13-e084-4387-aded-4679eb048cac) **r3shape's kit of tools**
 
 **r3kt** is designed to be minimal, and extensible, making writing complex programs simpler by reducing bugs and boilerplate, helping you ship faster.
 
