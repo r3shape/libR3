@@ -1,3 +1,9 @@
+<<<<<<< HEAD
 bin/
 .vscode/
 gen_*.py
+=======
+tests/
+build/
+.vscode/
+>>>>>>> 30b0500 ([r3kit rename :)])
