@@ -1,28 +1,6 @@
 {
 	"main": {
 		"flags": ["-Wall", "-Werror", "-std=c99"],
-<<<<<<< HEAD
-		"defines": ["R3KT_BUILD_SOURCE"],
-
-		"includes": ["."],
-		"sources": ["src/r3kt/*.c"],
-
-		"name": "r3kt",
-		"type": "dll",
-		"dest": "bin"
-	},
-	
-	"r3ktrt": {
-		"flags": ["-Wall", "-Werror", "-std=c99"],
-		"defines": ["R3KT_BUILD_SOURCE", "R3KT_BUILD_RUNTIME_SOURCE"],
-
-		"includes": ["."],
-		"sources": ["src/r3kt/*.c"],
-
-		"name": "r3kt",
-		"type": "dll",
-		"dest": "bin"
-=======
 		"defines": ["R3_BUILD_SOURCE"],
 
 		"includes": ["."],
@@ -36,31 +14,20 @@
 		"name": "r3kit",
 		"type": "dll",
 		"dest": "build"
->>>>>>> 30b0500 ([r3kit rename :)])
 	},
 
 	"tests": {
 		"flags": ["-Wall", "-Werror", "-std=c99"],
 
 		"includes": ["."],
-<<<<<<< HEAD
-		"sources": ["src/tests/*.c"],
-		"libraries": {
-			"r3kt": "bin"
-=======
 		"sources": ["tests/*.c"],
 		"libraries": {
 			"r3kit": "build"
->>>>>>> 30b0500 ([r3kit rename :)])
 		},
 
 		"name": null,
 		"type": "exe",
-<<<<<<< HEAD
-		"dest": "bin"
-=======
 		"dest": "build"
->>>>>>> 30b0500 ([r3kit rename :)])
 	}
 
 }
