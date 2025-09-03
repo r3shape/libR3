@@ -96,6 +96,20 @@ u8 r3_mem_read(u64 size, ptr value, ptr mem) {
 	return 1;
 }
 
+u8 r3_mem_move(u64 size, ptr value, ptr mem) {
+	u8 size_err; u8 value_err; u8 ptr_err;
+	if ((size_err = (!size)) || (value_err = (!value)) || (ptr_err = (!mem))) {
+		if (size_err) r3_log_stdoutf(ERROR_LOG, "[alloc] invalid write size: %llu\n", size);
+		if (value_err) r3_log_stdout(ERROR_LOG, "[alloc] value error for write\n");
+		if (ptr_err) r3_log_stdout(ERROR_LOG, "[alloc] invalid pointer for write\n");
+		return 0;
+	}
+	
+	memmove(mem, value, size);
+
+	return 1;
+}
+
 u8 r3_mem_write(u64 size, ptr value, ptr mem) {
 	u8 size_err; u8 value_err; u8 ptr_err;
 	if ((size_err = (!size)) || (value_err = (!value)) || (ptr_err = (!mem))) {
