@@ -48,15 +48,15 @@ u8 r3_arr_realloc(u64 max, Array* in) {
 
     u64 stride = R3_HEADER(ArrayHeader, in)->stride;
 	
-    ptr raw = (ptr)((u8*)in->data - sizeof(ArrayHeader));
-    raw = r3_mem_realloc(sizeof(ArrayHeader) + (max * stride), 8, raw);
-    if (!raw) {
+    ArrayHeader* header = (ptr)((u8*)in->data - sizeof(ArrayHeader));
+    header = r3_mem_realloc(sizeof(ArrayHeader) + (max * stride), 8, header);
+    if (!header) {
         r3_log_stdoutf(ERROR_LOG, "[arr] failed to realloc array: (max)%d\n", max);
         return 1;
     }
 
-    ((u64*)raw)[ARRAY_MAX_FIELD] = max;
-	in->data = (ptr)((u8*)raw + sizeof(ArrayHeader));
+    header->max = max;
+	in->data = (ptr)((u8*)header + sizeof(ArrayHeader));
 
     return 1;
 }
@@ -264,8 +264,10 @@ u8 r3_arr_assign(u64 index, ptr value, Array* in) {
 	
 	u64 max = R3_HEADER(ArrayHeader, in)->max;
 	if (index >= max) {
-		r3_log_stdoutf(WARN_LOG, "[arr] attempted write past array bounds: (max)%d (index)%d\n", max, index);
-		return 0;
+        r3_arr_realloc(index + 8, in);
+
+		max = R3_HEADER(ArrayHeader, in)->max;
+		r3_log_stdoutf(WARN_LOG, "[arr] reallocated (index + 8) after attempted assignment past array bounds: (max)%d (index)%d\n", max, index);
 	}
 	
 	u64 count = R3_HEADER(ArrayHeader, in)->count;

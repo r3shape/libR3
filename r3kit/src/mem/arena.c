@@ -40,12 +40,17 @@ ptr r3_arena_alloc(u64 size, Arena_Allocator* alloc) {
         }
     }
 
-    ptr buffer = (ptr)((u8*)alloc->buffer + alloc->offset);
-    alloc->offset += size;
-
-    return buffer;
+    if (alloc->offset + size > alloc->size) {
+        r3_log_stdout(ERROR_LOG, "[arena] arena out of memory\n");
+        return NULL;
+    } else {
+        ptr buffer = (ptr)((u8*)alloc->buffer + alloc->offset);
+        alloc->offset += size;
+        return buffer;
+    }
 }
 
+// TODO: implement arena rewinds to avoid dealloc directly
 u8 r3_arena_dealloc(u64 size, ptr value, Arena_Allocator* alloc) {
     // NULL value, assume allocator deallocation
     if (!size || !value) {

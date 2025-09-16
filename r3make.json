@@ -1,7 +1,7 @@
 {
 	"main": {
 		"flags": ["-Wall", "-Werror", "-std=c99"],
-		"defines": ["R3_BUILD_SOURCE"],
+		"defines": ["R3_BUILD_DLL"],
 
 		"includes": ["."],
 		"sources": [
@@ -15,7 +15,6 @@
 		"type": "dll",
 		"dest": "build"
 	},
-
 	"tests": {
 		"flags": ["-Wall", "-Werror", "-std=c99"],
 
@@ -29,5 +28,4 @@
 		"type": "exe",
 		"dest": "build"
 	}
-
 }
