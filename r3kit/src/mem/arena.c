@@ -25,7 +25,7 @@ ptr r3_arena_alloc(u64 size, Arena_Allocator* alloc) {
     }
     
     if (!size) {
-        r3_log_stdout(ERROR_LOG, "[arena] invalid arena pointer\n");
+        r3_log_stdout(ERROR_LOG, "[arena] invalid arena size\n");
         return NULL;
     }
 
