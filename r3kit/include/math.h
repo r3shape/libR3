@@ -112,6 +112,8 @@ R3_API Mat4 r3_mat4_rotate(Vec3 axis, f32 angle);
 R3_API Mat4 r3_mat4_scale(Vec3 scale, Mat4 mat4);
 R3_API Mat4 r3_mat4_translate(Vec3 translation, Mat4 mat4);
 
+R3_API Mat4 r3_mat4_transpose(Mat4 mat4);
+
 R3_API Mat4 r3_mat4_lookat(Vec3 eye, Vec3 center, Vec3 up);
 R3_API Mat4 r3_mat4_perspective(f32 fov, f32 aspect, f32 near, f32 far);
 R3_API Mat4 r3_mat4_ortho(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far);

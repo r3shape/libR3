@@ -289,6 +289,18 @@ Mat4 r3_mat4_translate(Vec3 translation, Mat4 mat4) {
 }
 
 
+Mat4 r3_mat4_transpose(Mat4 mat4) {
+    Mat4 result = mat4;
+    SWAP(f32, result.data[1], result.data[4]);   // (0,1) <-> (1,0)
+    SWAP(f32, result.data[2], result.data[8]);   // (0,2) <-> (2,0)
+    SWAP(f32, result.data[3], result.data[12]);  // (0,3) <-> (3,0)
+    SWAP(f32, result.data[6], result.data[9]);   // (1,2) <-> (2,1)
+    SWAP(f32, result.data[7], result.data[13]);  // (1,3) <-> (3,1)
+    SWAP(f32, result.data[11],result.data[14]);  // (2,3) <-> (3,2)
+    return result;
+}
+
+
 Mat4 r3_mat4_lookat(Vec3 eye, Vec3 center, Vec3 up) {
 	Vec3 forward_v = r3_vec3_norm(r3_vec3_sub(center, eye));
 	Vec3 right_v = r3_vec3_norm(r3_vec3_cross(forward_v, up));
