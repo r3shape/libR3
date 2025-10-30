@@ -1,4 +1,7 @@
+bin/
 tests/
+*.frag
+*.vert
 build/
 .cache/
 .vscode/
