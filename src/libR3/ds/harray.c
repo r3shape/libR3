@@ -23,10 +23,8 @@ static inline u64 _probeWriteSlot(const char* key, ptr array) {
 	FOR_I(0, slots, 1) {
 		R3KVP* kvp = &((R3KVP*)array)[slot];
 		if (kvp->k != NULL && strcmp(kvp->k, key) == 0) {
-			r3LogStdOutF(R3_LOG_WARN, "`_probeWriteSlot` -- probed overwrite slot: (key)%s (slot)%d\n", kvp->k, slot);
 			return (u64)slot;
 		} else if (kvp->v == NULL) {
-			r3LogStdOutF(R3_LOG_OK, "`_probeWriteSlot` -- probed write slot: (key)%s (slot)%d\n", key, slot);
 			return (u64)slot;
 		} else {
 			slot = (slot + 1) % slots;
@@ -49,7 +47,6 @@ static inline u64 _probeReadSlot(const char* key, ptr array) {
 	FOR_I(0, slots, 1) {
 		R3KVP* kvp = &((R3KVP*)array)[slot];
 		if (kvp && kvp->k != NULL && strcmp(kvp->k, key) == 0) {
-			r3LogStdOutF(R3_LOG_OK, "`_probeReadSlot` -- probed read slot: (key)%s (slot)%d\n", kvp->k, slot);
 			return (u64)slot;
 		} else {
 			slot = (slot + 1) % slots;
@@ -138,7 +135,7 @@ R3Result r3SetHashArray(char* key, ptr value, ptr array) {
 	if (slot > h.slots) {
 		r3LogStdOutF(R3_LOG_ERROR, "Failed `SetHashArray` -- failed to probe write hashed slot: (key)%s (slot)%d (slots)%llu\n", key, slot, h.slots);
 		return R3_RESULT_ERROR;
-	} else { r3LogStdOutF(R3_LOG_OK, "`SetHashArray` -- probed write hashed slot: (key)%s (slot)%d (stride)%d\n", key, slot, stride); }
+	} // else { r3LogStdOutF(R3_LOG_OK, "`SetHashArray` -- probed write hashed slot: (key)%s (slot)%d (stride)%d\n", key, slot, stride); }
 
     R3KVP kvp;
     r3GetArray(slot, array, &kvp);

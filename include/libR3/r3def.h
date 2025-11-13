@@ -67,15 +67,35 @@ typedef enum R3Result {
 #define MAX4(a, b, c, d) MAX((a), MAX3((b), (c), (d)))
 #define MIN4(a, b, c, d) MIN((a), MIN3((b), (c), (d)))
 
-#define SWAP(t, a, b) { t tmp = a; (a) = (b); (b) = tmp; }
+#define FLIP_BIT(v, b)  ((v) ^ (1<<(b)))
+#define SET_BITS(v, b)  ((v) | (1<<(b)))
+#define GET_BITS(v, b)  ((v) & (1<<(b)))
+#define REM_BITS(v, b)  ((v) & ~(1<<(b)))
 
+#define MOD(value, limit) ((value) % (limit))
+#define MODF(value, limit) (fmod((f64)(value), (limit)))
+#define SWAP(t, a, b) { t tmp = a; (a) = (b); (b) = tmp; }
 #define CLAMP(v, l, h) (((v) > (h)) ? (h) : ((v) < (l)) ? (l) : (v))
 
 #define FOR_I(start, stop, step) for (u32 i = start; i < stop; i += step)
 #define FOR_J(start, stop, step) for (u32 j = start; j < stop; j += step)
 #define FOR_K(start, stop, step) for (u32 k = start; k < stop; k += step)
-
 #define FOR(type, iter, start, stop, step) for (type iter = start; iter < stop; iter += step)
+
+#define ENUM(n, ...)                    \
+    typedef enum n {                    \
+        __VA_ARGS__                     \
+    } n                                 \
+
+#define UNION(n, ...)                   \
+    typedef union n {                   \
+        __VA_ARGS__                     \
+    } n                                 \
+
+#define STRUCT(n, ...)                  \
+    typedef struct n {                  \
+        __VA_ARGS__                     \
+    } n                                 \
 
 #ifndef NULL
     #ifndef _WIN64

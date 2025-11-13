@@ -135,6 +135,18 @@ R3Result r3WriteMemory(u64 bytes, ptr source, ptr dest) {
     return R3_RESULT_SUCCESS;
 }
 
+R3Result r3CompareMemory(u64 bytes, ptr mem1, ptr mem2) {
+    if (!bytes) {
+        r3LogStdOut(R3_LOG_ERROR, "Failed `CompareMemory` -- invalid byte count\n");
+        return R3_RESULT_ERROR;
+    } if (!mem1 || !mem2) {
+        r3LogStdOut(R3_LOG_ERROR, "Failed `CompareMemory` -- invalid memory pointer(s)\n");
+        return R3_RESULT_ERROR;
+    }
+
+    return (!memcmp(mem1, mem2, bytes)) ? R3_RESULT_SUCCESS : R3_RESULT_ERROR;
+}
+
 
 /* --------------------------------------------------------------------------
     Memory Buffer API

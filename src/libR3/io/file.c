@@ -1,3 +1,4 @@
+#include <include/libR3/io/string.h>
 #include <include/libR3/mem/mem.h>
 #include <include/libR3/io/file.h>
 #include <include/libR3/io/log.h>
@@ -185,6 +186,105 @@ R3Result r3SaveFile(u64 bytes, char* path, ptr file) {
 	return R3_RESULT_SUCCESS;
 }
 
+
+u64 r3SumFileChars(char* file) {
+    if (!file) return 0;
+    u64 count = 0;
+    while (*file) {
+        if (*file != '\0') count++;
+        file++;
+    }; return count;
+}
+
+u64 r3SumFileLines(char* file) {
+    if (!file) return 0;
+    u64 count = 0;
+    while (*file) {
+        if (*file == '\n') count++;
+        file++;
+    }; return count + (*file == '\n' ? 1 : 0);
+}
+
+char* r3GetFileLine(u64 line, char* file) {
+    if (!line || !file) return NULL;
+    u64 count = 0;
+    while (*file) {
+        if (*file == '\n') {
+            count++;
+            if (count == line) break;
+        } file++;
+    } if (count != line) return NULL;   // line not found?
+
+    char* start = (char*)file + 1;
+    char* end = start;
+    while (*end && *end != '\n') end++;
+    
+    u64 chars = ((u64)end - (u64)start);
+    if (!chars) return NULL;            // line empty
+
+    char* string = r3NewString(chars);
+    if (!string || !r3WriteString(chars, start, string)) return NULL;
+
+    return string;
+}
+
+char* r3GetFileWord(u64 line, u64 word, char* file) {
+    if (!line || !file) return NULL;
+    
+    // find line start
+    u64 lcount = 1;
+    while (*file && lcount < line) {
+        if (*file == '\n') lcount++;
+        file++;
+    } if (lcount != line) return NULL;   // line not found?
+
+    // iter words
+    u64 wcount = 0;
+    while (*file) {
+        // skip non-word chars
+        while (*file\
+        && (*file == ' '\
+        ||  *file == '('\
+        ||  *file == ')'\
+        ||  *file == '{'\
+        ||  *file == '}'\
+        ||  *file == ';'\
+        ||  *file == '='\
+        ||  *file == ','\
+        ||  *file == '.'\
+        ||  *file == '\t'\
+        ||  *file == '\n'\
+        ||  *file == '\r')) {
+            file++;
+        } if (!*file || *file == '\n') break;
+
+        char* wstart = file;
+        // advance until non-word char
+        while (*file\
+        && (*file != ' '\
+        &&  *file != '('\
+        &&  *file != ')'\
+        &&  *file != '{'\
+        &&  *file != '}'\
+        &&  *file != ';'\
+        &&  *file != '='\
+        &&  *file != ','\
+        &&  *file != '.'\
+        &&  *file != '\t'\
+        &&  *file != '\n'\
+        &&  *file != '\r')) {
+            file++;
+        }
+
+        wcount++;
+        if (wcount == word) {
+            u64 chars = (u64)(file - wstart);
+            char* string = r3NewString(chars);
+            if (!string || !r3WriteString(chars, wstart, string)) return NULL;
+            return string;
+        }
+    } return NULL;
+}
 
 R3Result r3ClearFile(ptr file) {
     if (!file) {

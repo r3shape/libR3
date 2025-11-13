@@ -1,36 +1,43 @@
+#include <include/libR3/mem/alloc.h>
 #include <include/libR3/ds/array.h>
-#include <include/libR3/mem/mem.h>
 #include <include/libR3/io/log.h>
 
 #define R3_ARRAY_HEADER_SIZE sizeof(R3ArrayHeader)
 
-inline u16 r3ArrayCount(ptr array) {
+inline u64 r3ArrayCount(ptr array) {
     if (!array) {
-        r3LogStdOut(R3_LOG_ERROR, "Failed `DelArray` -- invalid pointer\n");
+        r3LogStdOut(R3_LOG_ERROR, "Failed `ArrayCount` -- invalid pointer\n");
         return R3_RESULT_ERROR;
     } return ((R3ArrayHeader*)((u8*)array - R3_ARRAY_HEADER_SIZE))->count;
 }
 
-inline u16 r3ArraySlots(ptr array) {
+inline u64 r3ArraySlots(ptr array) {
     if (!array) {
-        r3LogStdOut(R3_LOG_ERROR, "Failed `DelArray` -- invalid pointer\n");
+        r3LogStdOut(R3_LOG_ERROR, "Failed `ArraySlots` -- invalid pointer\n");
         return R3_RESULT_ERROR;
     } return ((R3ArrayHeader*)((u8*)array - R3_ARRAY_HEADER_SIZE))->slots;
 }
 
+inline u64 r3ArraySize(ptr array) {
+    if (!array) {
+        r3LogStdOut(R3_LOG_ERROR, "Failed `ArraySize` -- invalid pointer\n");
+        return R3_RESULT_ERROR;
+    } return ((R3ArrayHeader*)((u8*)array - R3_ARRAY_HEADER_SIZE))->size;
+}
+
 inline u16 r3ArrayStride(ptr array) {
     if (!array) {
-        r3LogStdOut(R3_LOG_ERROR, "Failed `DelArray` -- invalid pointer\n");
+        r3LogStdOut(R3_LOG_ERROR, "Failed `ArrayStride` -- invalid pointer\n");
         return R3_RESULT_ERROR;
     } return ((R3ArrayHeader*)((u8*)array - R3_ARRAY_HEADER_SIZE))->stride;
 }
 
 R3Result r3ArrayHeader(R3ArrayHeader* header, ptr array) {
     if (!header) {
-        r3LogStdOut(R3_LOG_ERROR, "Failed `DelArray` -- invalid pointer\n");
+        r3LogStdOut(R3_LOG_ERROR, "Failed `ArrayHeader` -- invalid pointer\n");
         return R3_RESULT_ERROR;
     } if (!array) {
-        r3LogStdOut(R3_LOG_ERROR, "Failed `DelArray` -- invalid pointer\n");
+        r3LogStdOut(R3_LOG_ERROR, "Failed `ArrayHeader` -- invalid pointer\n");
         return R3_RESULT_ERROR;
     }
 
@@ -100,12 +107,17 @@ ptr r3ResizeArray(u64 slots, u16 stride, ptr array) {
     u64 ocount = ((R3ArrayHeader*)raw)->count;
 
     ptr nraw = r3ReallocMemory(R3_ARRAY_HEADER_SIZE + (slots * stride), raw);
+    ((R3ArrayHeader*)nraw)->size = slots * stride;
     ((R3ArrayHeader*)nraw)->stride = stride;
     ((R3ArrayHeader*)nraw)->slots = slots;
 
     ptr narray = (ptr)((u8*)nraw + R3_ARRAY_HEADER_SIZE);
-    if (r3SetMemory(slots * stride, 0, (ptr)((u8*)narray + (ocount * ostride))) != R3_RESULT_SUCCESS) {
-        r3LogStdOut(R3_LOG_WARN, "Warning `ResizeArray` -- array memory set failed\n");
+    
+    /* compute newly available bytes and zero them */
+    u64 nbytes = (u64)(slots * stride);
+    u64 obytes = (u64)(ocount * ostride);
+    if ((nbytes > obytes) && r3SetMemory(nbytes - obytes, 0, (void*)((u8*)narray + obytes)) != R3_RESULT_SUCCESS) {
+        r3LogStdOut(R3_LOG_WARN, "Warning ResizeArray -- array memory set failed\n");
     }
 
     return narray;
@@ -178,6 +190,21 @@ R3Result r3LShiftArray(u64 slot, u64 shift, ptr array) {
 }
 
 
+R3Result r3InArray(ptr value, ptr array) {
+    if (!value) {
+        r3LogStdOut(R3_LOG_ERROR, "Failed `InArray` -- invalid value pointer\n");
+        return R3_RESULT_ERROR;
+    } if (!array) {
+        r3LogStdOut(R3_LOG_ERROR, "Failed `InArray` -- invalid array pointer\n");
+        return R3_RESULT_ERROR;
+    }
+
+    R3ArrayHeader* h = ((R3ArrayHeader*)((u8*)array - R3_ARRAY_HEADER_SIZE));
+    FOR_I(0, h->count, 1) {
+        if (r3CompareMemory(h->stride, value, (ptr)((u8*)array + (i * h->stride)))) return R3_RESULT_SUCCESS;
+    } return R3_RESULT_ERROR;
+}
+
 R3Result r3PopArray(ptr array, ptr dest) {
     if (!dest || !array) {
         r3LogStdOut(R3_LOG_ERROR, "Failed `PopArray` -- invalid dest/array pointer(s)\n");
@@ -215,7 +242,7 @@ R3Result r3PushArray(ptr value, ptr array) {
 
     R3ArrayHeader* h = ((R3ArrayHeader*)((u8*)array - R3_ARRAY_HEADER_SIZE));
     ptr writeat = (ptr)((u8*)array + (h->stride * h->count));
-    if (r3WriteMemory(h->stride, value, writeat) != R3_RESULT_SUCCESS) {
+    if (writeat && r3WriteMemory(h->stride, value, writeat) != R3_RESULT_SUCCESS) {
         r3LogStdOut(R3_LOG_ERROR, "Failed `PushArray` -- array memory write failed\n");
         return R3_RESULT_ERROR;
     }
@@ -255,15 +282,13 @@ R3Result r3RemArray(u64 slot, ptr array, ptr out) {
     }
 
     ptr readat = (ptr)((u8*)array + (h->stride * slot));
-    if (!*(u64*)readat) return R3_RESULT_SUCCESS;
-
     if (r3ReadMemory(h->stride, readat, out) != R3_RESULT_SUCCESS\
     ||  r3SetMemory(h->stride, 0, readat) != R3_RESULT_SUCCESS) {
         r3LogStdOut(R3_LOG_ERROR, "Failed `RemArray` -- array memory write failed\n");
         return R3_RESULT_ERROR;
     }
 
-    h->count--;
+    if (slot < h->count) h->count--;
 
     return R3_RESULT_SUCCESS;
 }
@@ -297,20 +322,17 @@ R3Result r3SetArray(u64 slot, ptr value, ptr array) {
 
     R3ArrayHeader* h = ((R3ArrayHeader*)((u8*)array - R3_ARRAY_HEADER_SIZE));
     if (slot > h->slots) {
-        r3LogStdOutF(R3_LOG_ERROR, "Failed `SetArray` -- invalid array slot: %d\n", slot);
+        r3LogStdOutF(R3_LOG_ERROR, "Failed `SetArray` -- invalid array slot: (slot)%llu (slots)%llu\n", slot, h->slots);
         return R3_RESULT_ERROR;
     }
 
-    u8 used = 1;
     ptr writeat = (ptr)((u8*)array + (h->stride * slot));
-    if (!*(u64*)writeat) used = 0;
-
     if (r3WriteMemory(h->stride, value, writeat) != R3_RESULT_SUCCESS) {
         r3LogStdOut(R3_LOG_ERROR, "Failed `SetArray` -- array memory write failed\n");
         return R3_RESULT_ERROR;
     }
 
-    if (!used) h->count++;
+    if (slot >= h->count) h->count++;
 
     return R3_RESULT_SUCCESS;
 }

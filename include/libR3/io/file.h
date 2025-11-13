@@ -31,6 +31,11 @@ R3_PUBLIC_API R3Result r3RewindFile(u64 bytes, ptr file);
 R3_PUBLIC_API R3Result r3LoadFile(char* path, ptr file);
 R3_PUBLIC_API R3Result r3SaveFile(u64 bytes, char* path, ptr file);
 
+R3_PUBLIC_API u64 r3SumFileChars(char* file);
+R3_PUBLIC_API u64 r3SumFileLines(char* file);
+R3_PUBLIC_API char* r3GetFileLine(u64 line, char* file);
+R3_PUBLIC_API char* r3GetFileWord(u64 line, u64 word, char* file);
+
 R3_PUBLIC_API R3Result r3ClearFile(ptr File);
 R3_PUBLIC_API R3Result r3CopyFile(u64 bytes, ptr source, ptr dest);
 R3_PUBLIC_API R3Result r3ReadFile(u64 bytes, ptr source, ptr dest);

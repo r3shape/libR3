@@ -88,6 +88,7 @@ R3_PUBLIC_API R3Result r3SetMemory(u64 bytes, u8 value, ptr memory);
 R3_PUBLIC_API R3Result r3ReadMemory(u64 bytes, ptr source, ptr dest);
 R3_PUBLIC_API R3Result r3MoveMemory(u64 bytes, ptr source, ptr dest);
 R3_PUBLIC_API R3Result r3WriteMemory(u64 bytes, ptr source, ptr dest);
+R3_PUBLIC_API R3Result r3CompareMemory(u64 bytes, ptr mem1, ptr mem2);
 
 /* --------------------------------------------------------------------------
     Memory Buffer API

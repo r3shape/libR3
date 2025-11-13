@@ -72,6 +72,9 @@ typedef struct Mat4 { f32 data[16]; } Mat4;
     0, 0, 0, 1                                \
 }}
 
+#define RADIANS(degrees) degrees * (PI / 180.0)
+#define DEGREES(radians) radians * (180.0 / PI)
+
 #define MAT4_X_CM(m) (Vec3){m.data[0], m.data[4], m.data[8]}
 #define MAT4_Y_CM(m) (Vec3){m.data[1], m.data[5], m.data[9]}
 #define MAT4_Z_CM(m) (Vec3){m.data[2], m.data[6], m.data[10]}

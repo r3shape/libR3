@@ -4,6 +4,7 @@ tests/
 *.frag
 *.vert
 build/
+libECX/
 .cache/
 .vscode/
 compile_commands.json

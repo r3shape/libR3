@@ -1,11 +1,6 @@
 #include <include/libR3/math/math.h>
 #include <include/libR3/io/log.h>
 
-/*	SCALAR	*/
-f32 r3Radians(f32 degrees) { return degrees * (PI / 180.0); }
-f32 r3Degrees(f32 radians) { return radians * (180.0 / PI); }
-
-
 /*	VECTOR	*/
 f32 r3Vec2Mag(Vec2 vec2) {
 	return sqrtf(VEC_X(vec2) * VEC_X(vec2) + VEC_Y(vec2) * VEC_Y(vec2));
@@ -142,8 +137,8 @@ Vec3 r3Mat4MulVec3(Vec3 vec3, Mat4 mat4) {
 
 Mat4 r3Mat4MulMat4(Mat4 mata, Mat4 matb) {
 	Mat4 result = {0};
-	FOR(u32, row, 0, 4, 1) {
-		FOR(u32, col, 0, 4, 1) {
+	FOR(u32, col, 0, 4, 1) {
+		FOR(u32, row, 0, 4, 1) {
 			FOR_K(0, 4, 1) {
 				result.data[col * 4 + row] += mata.data[k * 4 + row] * matb.data[col * 4 + k];
 			}
@@ -154,7 +149,7 @@ Mat4 r3Mat4MulMat4(Mat4 mata, Mat4 matb) {
 
 
 Mat4 r3Mat4RotateX(f32 angle) {
-	f32 rad_angle = r3Radians(angle);
+	f32 rad_angle = RADIANS(angle);
 	f32 cos_angle = cosf(rad_angle);
 	f32 sin_angle = sinf(rad_angle);
 
@@ -169,7 +164,7 @@ Mat4 r3Mat4RotateX(f32 angle) {
 }
 
 Mat4 r3Mat4RotateY(f32 angle) {
-	f32 rad_angle = r3Radians(angle);
+	f32 rad_angle = RADIANS(angle);
 	f32 cos_angle = cosf(rad_angle);
 	f32 sin_angle = sinf(rad_angle);
 
@@ -184,13 +179,13 @@ Mat4 r3Mat4RotateY(f32 angle) {
 }
 
 Mat4 r3Mat4RotateZ(f32 angle) {
-	f32 rad_angle = r3Radians(angle);
+	f32 rad_angle = RADIANS(angle);
 	f32 cos_angle = cosf(rad_angle);
 	f32 sin_angle = sinf(rad_angle);
 
 	Mat4 result = { .data={
-		cos_angle, -sin_angle, 0, 0,
-		sin_angle, cos_angle, 0, 0,
+		cos_angle, sin_angle, 0, 0,
+		-sin_angle, cos_angle, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1
 	} };
@@ -200,7 +195,7 @@ Mat4 r3Mat4RotateZ(f32 angle) {
 
 // axis-angle rotation (Rodrigues rotation formula)
 Mat4 r3Mat4Rotate(Vec3 axis, f32 angle) {
-	f32 rad_angle = r3Radians(angle);
+	f32 rad_angle = RADIANS(angle);
 	f32 cos_angle = cosf(rad_angle);
 	f32 sin_angle = sinf(rad_angle);
 	Mat4 result = IDENTITY();
@@ -272,30 +267,31 @@ Mat4 r3Mat4Transpose(Mat4 mat4) {
 
 
 Mat4 r3Mat4Lookat(Vec3 eye, Vec3 center, Vec3 up) {
-	Vec3 forward_v = r3Vec3Norm(r3Vec3Sub(center, eye));
-	Vec3 right_v = r3Vec3Norm(r3Vec3Cross(forward_v, up));
-	Vec3 up_v = r3Vec3Norm(r3Vec3Cross(right_v, forward_v));
+    Vec3 f = r3Vec3Norm(r3Vec3Sub(center, eye));
+    Vec3 s = r3Vec3Norm(r3Vec3Cross(f, up));
+    Vec3 u = r3Vec3Cross(s, f);
 
-	return (Mat4){ .data={
-		right_v.data[0], up_v.data[0], -forward_v.data[0], 0,
-		right_v.data[1], up_v.data[1], -forward_v.data[1], 0,
-		right_v.data[2], up_v.data[2], -forward_v.data[2], 0,
-		-r3Vec3Dot(right_v, eye), -r3Vec3Dot(up_v, eye), -r3Vec3Dot(forward_v, eye), 1.0f
-	} };
+    return (Mat4){ .data = {
+        s.data[0], u.data[0], -f.data[0], 0.0f,
+        s.data[1], u.data[1], -f.data[1], 0.0f,
+        s.data[2], u.data[2], -f.data[2], 0.0f,
+        -r3Vec3Dot(s, eye),
+        -r3Vec3Dot(u, eye),
+         r3Vec3Dot(f, eye),
+        1.0f
+    }};
 }
 
 Mat4 r3Mat4Perspective(f32 fov, f32 aspect, f32 near, f32 far) {
-	f32 tan_fov = tanf(r3Radians(fov) / 2.0);
-	f32 far_p_near = far + near;
-	f32 far_m_near = far - near;
-	f32 far_t_near = far * near;
+    f32 f = 1.0f / tanf(RADIANS(fov) / 2.0f);
+    f32 nf = 1.0f / (near - far);
 
-	return (Mat4){ .data={
-		1.0f / (aspect * tan_fov), 0, 0, 0,
-		0, 1.0f / tan_fov, 0, 0,
-		0, 0, -far_p_near / far_m_near, -1.0f,
-		0, 0, -(2.0f * far_t_near) / far_m_near, 0
-	} };
+    return (Mat4){ .data = {
+        f / aspect, 0.0f, 0.0f, 0.0f,
+        0.0f, f, 0.0f, 0.0f,
+        0.0f, 0.0f, (far + near) * nf, -1.0f,
+        0.0f, 0.0f, (2.0f * far * near) * nf, 0.0f
+    }};
 }
 
 Mat4 r3Mat4Ortho(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far) {
